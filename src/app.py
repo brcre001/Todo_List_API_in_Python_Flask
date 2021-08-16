@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
-import json
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app)
 
 todos = [
     { 'label': "My first task", 'done': False },
@@ -9,15 +10,13 @@ todos = [
 
 @app.route('/todos', methods=['GET'])
 def hello_world():
-
     json_text = jsonify(todos)
-
     return json_text
 
 @app.route('/todos', methods=['POST'])
 def add_new_todo():
     request_body = request.data
-    decoded_object = json.loads(request_body)
+    decoded_object = jsonify(request_body)
     todos.append(decoded_object)
     return jsonify(todos)
 
