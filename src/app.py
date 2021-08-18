@@ -1,24 +1,31 @@
 from flask import Flask, jsonify, request
+import json
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-todos = [
-    { 'label': "My first task", 'done': False },
-    { 'label': "My second task", 'done': False }
-]
+todos = []
 
 @app.route('/todos', methods=['GET'])
-def hello_world():
+def grab_information():
     json_text = jsonify(todos)
     return json_text
 
 @app.route('/todos', methods=['POST'])
 def add_new_todo():
-    request_body = request.data
-    decoded_object = jsonify(request_body)
-    todos.append(decoded_object)
+    todo_text = request.data
+    todo = json.loads(todo_text)
+    todos.append(todo)
     return jsonify(todos)
+
+@app.route('/todos/<int:position>', methods=['PUT'])
+def change_done(position):
+    todo_text = request.data
+    todo = json.loads(todo_text)
+    if todo['label'] == None or todo['done'] == None:
+        return "This doesn't have a label", 400
+    todos[position] = todo
+    return jsonify(todos), 200
 
 @app.route('/todos/<int:position>', methods=['DELETE'])
 def delete_todo(position):
